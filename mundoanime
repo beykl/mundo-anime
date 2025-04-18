@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - Mundo Anime</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #0d0c1d, #302b63, #24243e);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background 0.5s ease;
+    }
+
+    .registro-container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #6c63ff;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #a78bfa;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #6c63ff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #7f7cf4;
+    }
+
+    #comentarios {
+      margin-top: 20px;
+    }
+
+    .comentario {
+      margin-bottom: 15px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 8px;
+    }
+
+    .comentario h4 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .comentario p {
+      margin: 5px 0;
+    }
+
+    .like-button {
+      background: none;
+      border: none;
+      color: #6c63ff;
+      cursor: pointer;
+    }
+
+    .share-buttons button {
+      margin: 5px;
+      padding: 10px;
+      background-color: #4c4c8c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .share-buttons button:hover {
+      background-color: #57579b;
+    }
+
+    .share-buttons {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="registro-container">
+    <h1>Registro Anime</h1>
+    <form id="registroForm">
+      <label for="nombre">Nombre de usuario</label>
+      <input type="text" id="nombre" name="nombre" required>
+
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" name="password" required>
+
+      <label for="generos">Géneros favoritos</label>
+      <select id="generos" name="generos" multiple required>
+        <option value="acción">Acción</option>
+        <option value="comedia">Comedia</option>
+        <option value="drama">Drama</option>
+        <option value="romance">Romance</option>
+        <option value="fantasía">Fantasía</option>
+        <option value="ciencia_ficción">Ciencia Ficción</option>
+        <option value="misterio">Misterio</option>
+        <option value="horror">Horror</option>
+        <option value="psicológico">Psicológico</option>
+        <option value="slice_of_life">Slice of Life</option>
+      </select>
+
+      <button type="submit">Registrarse</button>
+    </form>
+  </div>
+
+  <div id="comentarios">
+    <h2>Comentarios</h2>
+    <div class="comentario">
+      <h4>Usuario1</h4>
+      <p>¡Me encanta este anime!</p>
+      <button class="like-button">Like</button>
+    </div>
+    <div class="comentario">
+      <h4>Usuario2</h4>
+      <p>¡Recomiendo ver este anime!</p>
+      <button class="like-button">Like</button>
+    </div>
+  </div>
+
+  <div class="share-buttons">
+    <h2>Compartir en redes sociales</h2>
+    <button onclick="compartir('whatsapp')">WhatsApp</button>
+    <button onclick="compartir('twitter')">Twitter</button>
+    <button onclick="compartir('instagram')">Instagram</button>
+    <button onclick="compartir('tiktok')">TikTok</button>
+    <button onclick="copiarVinculo()">Copiar vínculo</button>
+  </div>
+
+  <script>
+    async function obtenerAnimePopular() {
+      try {
+        const response = await fetch('https://api.jikan.moe/v4/top/anime');
+        const data = await response.json();
+        const animeTitulo = data.data[0].title.toLowerCase();
+
+        if (animeTitulo.includes("jujutsu") || animeTitulo.includes("kaisen")) {
+          document.body.style.background = "linear-gradient(to right, #000, #3a3a74)";
+        } else if (animeTitulo.includes("demon") || animeTitulo.includes("kimetsu")) {
+          document.body.style.background = "linear-gradient(to right, #140e14, #8f2d56)";
+        } else {
+          document.body.style.background = "linear-gradient(to right, #0d0c1d, #302b63, #24243e)";
+        }
+      } catch (error) {
+        console.error("Error obteniendo anime en tendencia:", error);
+      }
+    }
+
+    function guardarUsuario(nombre, email, generos) {
+      const usuario = { nombre, email, generos };
+      localStorage.setItem('usuarioAnime', JSON.stringify(usuario));
+    }
+
+    document.getElementById('registroForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const generos = Array.from(document.getElementById('generos').selectedOptions).map(option => option.value);
+
+      if (nombre && email && password && generos.length > 0) {
+        guardarUsuario(nombre, email, generos);
+        window.location.href = 'mundo_anime.html'; // Página siguiente
+      }
+    });
+
+    document.querySelectorAll('.like-button').forEach(button => {
+      button.addEventListener('click', function() {
+        this.textContent = this.textContent === "Like" ? "Liked" : "Like"; // Cambia el texto
+      });
+    });
+
+    function compartir(redSocial) {
+      alert(`Compartir en ${redSocial}`);
+    }
+
+    function copiarVinculo() {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Vínculo copiado al portapapeles");
+    }
+
+    obtenerAnimePopular();
+  </script>
+</body>
+</html>
